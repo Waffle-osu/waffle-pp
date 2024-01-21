@@ -7,46 +7,12 @@ import (
 )
 
 func CalculateEyupStars(beatmap osu_parser.OsuFile) float64 {
-	countNormal := 0
-	countSlider := 0
-	countSpinner := 0
-
-	length := 0
-	drainLength := 0
-
-	for _, object := range beatmap.HitObjects.HitObjects {
-		if (object.Type & 1) > 0 {
-			countNormal++
-		}
-		if (object.Type & 2) > 0 {
-			countSlider++
-		}
-		if (object.Type & 8) > 0 {
-			countSpinner++
-		}
-	}
-
-	totalHitObjects := countNormal + (2 * countSlider) + (3 * countSpinner)
-
-	length = int(beatmap.HitObjects.HitObjects[len(beatmap.HitObjects.HitObjects)-1].Time-beatmap.HitObjects.HitObjects[0].Time) / 1000
-
-	breakTime := int32(0)
-
-	for _, event := range beatmap.Events.Events {
-		if event.EventType == osu_parser.EventTypeBreak {
-			breakTime += event.BreakTimeEnd - event.BreakTimeBegin
-		}
-	}
-
-	breakTime /= 1000
-
-	drainLength = length - int(breakTime)
-
-	noteDensity := float64(totalHitObjects) / float64(drainLength)
+	totalHitObjects := len(beatmap.HitObjects.List)
+	noteDensity := float64(totalHitObjects) / float64(beatmap.DrainLength)
 
 	difficulty := float64(0)
 
-	if float64(countSlider)/float64(totalHitObjects) < 0.1 {
+	if float64(beatmap.HitObjects.CountSlider)/float64(totalHitObjects) < 0.1 {
 		difficulty = beatmap.Difficulty.HPDrainRate + beatmap.Difficulty.OverallDifficulty + beatmap.Difficulty.CircleSize
 	} else {
 		bpm60 := (60000.0 / beatmap.TimingPoints.TimingPoints[0].BeatLength) / 60
