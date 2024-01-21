@@ -7,7 +7,7 @@ import (
 )
 
 func CalculateEyupStars(beatmap osu_parser.OsuFile) float64 {
-	totalHitObjects := len(beatmap.HitObjects.List)
+	totalHitObjects := beatmap.HitObjects.CountNormal + (beatmap.HitObjects.CountSlider * 2) + (beatmap.HitObjects.CountSpinner * 3)
 
 	if len(beatmap.TimingPoints.TimingPoints) == 0 || totalHitObjects == 0 {
 		return 0
