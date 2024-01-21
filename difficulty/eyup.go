@@ -31,5 +31,5 @@ func CalculateEyupStars(beatmap osu_parser.OsuFile) float64 {
 		stars = (math.Min(difficulty, 18)/18*10 + math.Min(25*(noteDensity-1), 40)) / 10
 	}
 
-	return stars
+	return math.Min(5, stars)
 }
